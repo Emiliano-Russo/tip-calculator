@@ -23,6 +23,7 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import * as SplashScreen from "expo-splash-screen";
+import { useTranslation } from "react-i18next";
 // import "@formatjs/intl-getcanonicallocales/polyfill";
 // import "@formatjs/intl-locale/polyfill";
 // import "@formatjs/intl-pluralrules/polyfill";
@@ -36,6 +37,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // Evita que la pantalla de inicio se oculte automáticamente
@@ -96,11 +98,7 @@ export default function App() {
           },
           tabBarLabel: ({ color, focused }) => {
             const labelText =
-              route.name === "Home"
-                ? "Home"
-                : route.name === "Location"
-                ? "Location"
-                : "History";
+              route.name === "Home" ? t("Inicio") : t("Ubicación");
             return (
               <Text style={{ color, fontFamily: "boldFont" }}>{labelText}</Text>
             );

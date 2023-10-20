@@ -13,6 +13,8 @@ const resources = {
       "Total •": "Total •",
       "Propina •": "Tip •",
       Lenguaje: "Language",
+      Inicio: "Home",
+      Ubicación: "Location",
     },
   },
   es: {
@@ -25,6 +27,8 @@ const resources = {
       "Total •": "Total •",
       "Propina •": "Propina •",
       Lenguaje: "Lenguaje",
+      Inicio: "Inicio",
+      Ubicación: "Ubicación",
     },
   },
   pt: {
@@ -37,6 +41,8 @@ const resources = {
       "Total •": "Total •",
       "Propina •": "Gorjeta •",
       Lenguaje: "Linguagem",
+      Inicio: "Início",
+      Ubicación: "Localização",
     },
   },
 };
