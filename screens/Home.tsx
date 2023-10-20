@@ -29,7 +29,6 @@ export const Home = () => {
   const { t, i18n } = useTranslation();
 
   const loadCountryData = useCallback(() => {
-    console.log("fifi country");
     getData("country").then((c) => {
       if (c) {
         const result = countries.find((x) => x.name == c);
@@ -88,7 +87,6 @@ export const Home = () => {
             <TextInput
               value={amount.toString()}
               onChange={(e) => {
-                console.log(e.nativeEvent.text);
                 if (e.nativeEvent.text == "") setAmount(0);
                 else setAmount(parseInt(e.nativeEvent.text));
               }}
