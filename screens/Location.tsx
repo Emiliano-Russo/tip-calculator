@@ -25,6 +25,12 @@ export const Location = () => {
     storeData("language", newLanguageCode); // Guardar el idioma seleccionado en el almacenamiento local
   };
 
+  const countrySelected = countries.find((x) => x.name == selectedCountry);
+  const description =
+    languageCode == "es"
+      ? countrySelected?.description?.es
+      : countrySelected?.description?.en;
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -115,7 +121,7 @@ export const Location = () => {
           textAlign: "center",
         }}
       >
-        {countries.find((x) => x.name == selectedCountry)?.description}
+        {description}
       </Text>
     </SafeAreaView>
   );
