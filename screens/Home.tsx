@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,37 +10,105 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 import { Switch } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { getData } from "../data/local.repo";
+import { Country, countries } from "../data/countries";
+import { useTranslation } from "react-i18next";
 
 const image = require("../assets/multicolor.png");
 const { width, height } = Dimensions.get("window");
 
 export const Home = () => {
+  const [country, setCountry] = useState<Country>({
+    name: "Brazil",
+    image: "https://img.icons8.com/color/48/brazil-circular.png",
+    tip: 10,
+  });
   const [sliderValue, setSliderValue] = useState(1);
-  const [isRoundUp, setIsRoundUp] = useState(false); // Para gestionar el estado del Switch
+  const [amount, setAmount] = useState(0);
+  const { t, i18n } = useTranslation();
+
+  const loadCountryData = useCallback(() => {
+    console.log("fifi country");
+    getData("country").then((c) => {
+      if (c) {
+        const result = countries.find((x) => x.name == c);
+        if (result) setCountry(result);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    loadCountryData();
+  }, []);
+
+  // Aquí es donde usamos useFocusEffect
+  useFocusEffect(
+    useCallback(() => {
+      loadCountryData();
+      return () => {}; // función de limpieza, si es necesario
+    }, [loadCountryData])
+  );
 
   const getLabel = () => {
     switch (sliderValue) {
       case 0:
-        return "Regular";
+        return t("Regular");
       case 1:
-        return "Buena";
+        return t("Buena");
       case 2:
-        return "Excelente";
+        return t("Excelente");
       default:
         return "";
     }
   };
 
+  const tip = {
+    "0": 1 + country.tip / 100,
+    "1": 1 + (2 * country.tip) / 100,
+    "2": 1 + (3 * country.tip) / 100,
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
+        <Text
+          style={{
+            marginTop: height * 0.1,
+            fontFamily: "boldFont",
+            fontSize: 17,
+            marginBottom: height * 0.01,
+          }}
+        >
+          {t("Monto a pagar")}
+        </Text>
+
         <ImageBackground source={image} style={styles.backgroundImage}>
           <View style={styles.inputContainer}>
-            <TextInput style={styles.textInput} keyboardType="numeric" />
+            <TextInput
+              value={amount.toString()}
+              onChange={(e) => {
+                console.log(e.nativeEvent.text);
+                if (e.nativeEvent.text == "") setAmount(0);
+                else setAmount(parseInt(e.nativeEvent.text));
+              }}
+              style={styles.textInput}
+              keyboardType="numeric"
+            />
             <Text style={styles.currencySymbol}>$</Text>
           </View>
         </ImageBackground>
 
+        <Text
+          style={{
+            marginTop: height * 0.1,
+            fontFamily: "boldFont",
+            fontSize: 17,
+            marginBottom: height * 0.01,
+          }}
+        >
+          {t("Experiencia")}
+        </Text>
         <ImageBackground source={image} style={styles.backgroundImageSlider}>
           <Slider
             style={styles.slider}
@@ -58,11 +126,16 @@ export const Home = () => {
           style={{
             fontSize: 40,
             fontFamily: "boldFont",
-            marginTop: height * 0.15,
+            marginTop: height * 0.11,
           }}
         >
-          Total • 200$
+          {"Total •"}{" "}
+          {Math.round(
+            amount * tip[sliderValue == 0 ? "0" : sliderValue == 1 ? "1" : "2"]
+          )}
+          $
         </Text>
+
         <Text
           style={{
             fontSize: 30,
@@ -70,15 +143,13 @@ export const Home = () => {
             marginTop: height * 0.01,
           }}
         >
-          Propina • 15$
+          {t("Propina •")}{" "}
+          {Math.round(
+            (tip[sliderValue == 0 ? "0" : sliderValue == 1 ? "1" : "2"] - 1) *
+              amount
+          )}
+          $
         </Text>
-        <View style={styles.roundUpContainer}>
-          <Text style={styles.roundUpText}>Redondear hacia arriba</Text>
-          <Switch
-            value={isRoundUp}
-            onValueChange={(value) => setIsRoundUp(value)}
-          />
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -99,7 +170,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     overflow: "hidden",
-    marginTop: height * 0.1,
   },
   backgroundImageSlider: {
     width: width * 0.7,
@@ -108,7 +178,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     overflow: "hidden",
-    marginTop: height * 0.1,
   },
   textInput: {
     width: "100%",
@@ -140,15 +209,5 @@ const styles = StyleSheet.create({
     fontFamily: "boldFont",
     fontSize: 16,
     textAlign: "center",
-  },
-  roundUpContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  roundUpText: {
-    marginRight: 10,
-    fontSize: 16,
-    fontFamily: "boldFont",
   },
 });

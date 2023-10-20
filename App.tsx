@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Font from "expo-font";
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
+import "./i18next";
 
 const Tab = createBottomTabNavigator();
 
@@ -51,6 +52,9 @@ export default function App() {
             height: 80,
             paddingBottom: 20,
             paddingTop: 10,
+          },
+          tabBarLabelStyle: {
+            fontFamily: "boldFont", // Aquí es donde estableces el fontFamily
           },
         })}
       >
